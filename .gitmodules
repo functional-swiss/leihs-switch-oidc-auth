@@ -1,0 +1,3 @@
+[submodule "mod_auth_openidc"]
+	path = mod_auth_openidc
+	url = https://github.com/zmartzone/mod_auth_openidc.git
