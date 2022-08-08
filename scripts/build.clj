@@ -3,7 +3,7 @@
 
 (def class-dir "target/classes")
 (def basis (b/create-basis {:project "deps.edn"}))
-(def uber-file (format "fun-leihs-oidc.jar"))
+(def uber-file (format "leihs-switch-oidc-auth.jar"))
 
 (defn clean [_]
   (b/delete {:path "target"}))

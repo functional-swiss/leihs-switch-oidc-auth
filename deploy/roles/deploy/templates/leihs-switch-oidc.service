@@ -1,0 +1,18 @@
+[Unit]
+Description={{leihs_switch_oidc_id}} Leihs Switch OIDC Auth
+After=syslog.target
+After=network.target
+
+[Service]
+Restart=always
+WorkingDirectory={{leihs_switch_oidc_service_dir}}
+User={{leihs_switch_oidc_user_name}}
+Group={{leihs_switch_oidc_user_name}}
+ExecStart=/usr/bin/java "-Xmx1g" \
+  "-jar" "leihs-switch-oidc-auth.jar" "run" \
+  --http-server-port {{leihs_switch_oidc_http_port}}
+
+[Install]
+WantedBy=multi-user.target
+
+# vi: ft=sh

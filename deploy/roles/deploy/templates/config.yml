@@ -1,0 +1,54 @@
+---
+# {{ansible_managed}} from template {{template_path}} on {{template_run_date}}
+
+
+service:
+  # e.g. myorg, must be the same as the id of the auth adapter in leihs
+  id: {{leihs_switch_oidc_id}}
+  # e.g. https://myorg.leihs.app
+  external-base-url: '{{leihs_switch_oidc_external_base_url}}'
+
+oidc:
+  client-id: {{leihs_switch_oidc_client_id}}
+  client-secret: {{leihs_switch_oidc_client_secret}}
+  config-url: https://login.eduid.ch/.well-known/openid-configuration
+
+leihs:
+  # boolean, turns on|off user and group management via leihs api
+  mange-users-enabled: {{leihs_switch_oidc_manage_users_enabled}}
+  # leihs api token, required when mange-users-enabled
+  api-token: '{{leihs_switch_oidc_leihs_api_token}}'
+  # leihs user and group organization
+  organization: '{{leihs_switch_oidc_leihs_organziation}}'
+
+  # sensible defaults fixed here, use custom template for customization
+  user-create-defaults:
+    password_sign_in_enabled: false
+    account_enabled: true
+    admin_protected: true
+
+  user-update-defaults:
+    account_enabled: true
+    admin_protected: true
+
+  group-create-defaults:
+    admin_protected: true
+    system_admin_protected: true
+
+
+  # service private and public key pair to communicate with leihs
+  my-key-pair:
+    private-key: |
+      {{ leihs_switch_oidc_leihs_my_priv_key  | trim | indent(6) }}
+    public-key: |
+      {{ leihs_switch_oidc_leihs_my_pub_key | trim | indent(6) }}
+    algorithm: ES256
+
+
+  # leihs public key to communicate with leihs
+  remote-key-pair:
+    public-key: |
+      {{ leihs_switch_oidc_leihs_remote_pub_key | trim | indent(6) }}
+    algorithm: ES256
+
+

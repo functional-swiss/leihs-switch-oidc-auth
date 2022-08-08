@@ -45,17 +45,61 @@ https://github.com/functional-swiss/leihs-sync for example.
 
 
 
-Configuation
-------------
-
-### Switch OIDC Authentication Configuration
-
-TODO
-
-### Ad-Hoc User management Configuration
+Configuation and Deployment
+---------------------------
 
 
-TODO
+Usually his auth adapter is deployed on the leihs server itself. If not so some
+parameters must be adjusted. For deployment add this repository as the git
+submodule `leihs-switch-oidc-auth`.
+
+
+1. Create a new authentication system:
+
+    ```
+    type: external
+    external_sign_in_url: https://{{LEIHS.DOMAIN}}/authenticators/switch-open-id/{{YOURORG}}/request-sign-in
+    sign_up_email_match: ^.+@YOURDOMAIN$
+    ```
+
+2. Amend the reverse proxy configuration
+
+    ```
+    ProxyPass /authenticators/ID/phbern http://localhost:PORT/authenticators/switch-open-id/ID nocanon retry=0
+    ```
+
+3. Add a file `config/{{YOURORG}}_switch_oidc_ansible_vars.yml` for contents, see
+
+    `leihs-switch-oidc-auth/deploy/roles/deploy/defaults/main.yml`
+    `leihs-switch-oidc-auth/deploy/roles/deploy/templates/config.yml`
+    `leihs-switch-oidc-auth/deploy/roles/deploy/templates/leihs-switch-oidc.service`
+
+
+4. deploy e.g. with
+
+    ```
+    #!/usr/bin/env bash
+
+    set -eux
+
+    INVENTORY_DIR="$(cd -- "$(dirname "${BASH_SOURCE}")" ; cd .. > /dev/null 2>&1 && pwd -P)"
+    ORGANIZATION='myunivesity.ch'
+    HOSTS_FILE=hosts
+
+    ${INVENTORY_DIR}/leihs/deploy/bin/ansible-playbook \
+      -i ${INVENTORY_DIR}/${HOSTS_FILE} \
+      -e "leihs_switch_oidc_id=${ORGANIZATION}" \
+      ${INVENTORY_DIR}/leihs-switch-oidc-auth/deploy/deploy_play.yml $@
+
+    ```
+
+5.  Try to authenticate, the first attempt should create the user account and
+    some groups but then fail because the created account is not associated with
+    the authentication system.
+
+    There will be a new group with the organization `{{YOURDOMAIN}}` and
+    the org_id `switch-oidc`. Connect this one to the authentication system and
+    from now on sign-in should work as expected.
 
 
 
@@ -69,8 +113,19 @@ TODO
 Development Notes
 -----------------
 
+
+### Manual Testing after upgrades
+
 Test URL https://test.home.arpa:3200/authenticators/switch-open-id/{{CUSTOMER}}/protected/
 Test E-Mail Address: thomas.schank.test@{{CUSTOMER}}.ch
+
+1. Test if creation works after removing user account
+
+2. Test if update works if account is already existing, in particular update of
+   the primary email address
+
+3. Test if email address will be deleted from some other account
+
 
 
 ### Start in dev mode

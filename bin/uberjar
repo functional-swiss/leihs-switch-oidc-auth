@@ -4,7 +4,7 @@ PROJECT_DIR="$(cd -- "$(dirname "${BASH_SOURCE}")" ; cd .. > /dev/null 2>&1 && p
 cd $PROJECT_DIR
 source $PROJECT_DIR/support/clojure/bin/activate
 
-PROJECT_NAME="fun-leihs-oidc"
+PROJECT_NAME="leihs-switch-oidc-auth"
 JAR_NAME="${PROJECT_NAME}.jar"
 
 # dirty working tree checking is problematic on CI => disabled for now

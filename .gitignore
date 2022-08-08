@@ -2,6 +2,5 @@
 .nrepl-port
 /keygen*
 /target
-config.yml
-fun-leihs-oidc.jar
+leihs-switch-oidc-auth.jar
 tmp/

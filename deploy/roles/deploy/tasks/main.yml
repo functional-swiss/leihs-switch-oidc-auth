@@ -1,0 +1,61 @@
+- name: install opendjk-11-jdk
+  apt:
+    name: openjdk-11-jdk
+    state: latest
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: 'create user {{leihs_switch_oidc_user_name}}'
+  user:
+    name: '{{leihs_switch_oidc_user_name}}'
+    system: yes
+
+- name: 'create directory {{leihs_switch_oidc_service_dir}}'
+  file:
+    path: '{{leihs_switch_oidc_service_dir}}'
+    state: directory
+    owner: '{{leihs_switch_oidc_user_name}}'
+    recurse: yes
+
+- name: template {{leihs_switch_oidc_config_template}} config file
+  template:
+    src: '{{leihs_switch_oidc_config_template}}'
+    dest: '{{leihs_switch_oidc_service_dir}}/config.yml'
+    mode: 0600
+    owner: '{{leihs_switch_oidc_user_name}}'
+    group: '{{leihs_switch_oidc_user_name}}'
+  tags: [config]
+
+- name: create uberjar
+  delegate_to: localhost
+  args:
+    executable: /bin/bash
+  shell: |
+    #!/usr/bin/env bash
+    set -euxo
+    cd {{playbook_dir}}/..
+    ./bin/uberjar
+  tags: [uberjar]
+
+- name: copy uberjar
+  copy:
+    src: '{{playbook_dir}}/../leihs-switch-oidc-auth.jar'
+    dest: '{{leihs_switch_oidc_service_dir}}/leihs-switch-oidc-auth.jar'
+    owner: '{{leihs_switch_oidc_user_name}}'
+  tags: [uberjar]
+
+- name: setup service file
+  template:
+    src: 'leihs-switch-oidc.service'
+    dest: /etc/systemd/system/{{leihs_switch_oidc_service_name}}.service
+    mode: 0644
+  tags: [service]
+
+- name: restart service
+  systemd:
+    name: '{{leihs_switch_oidc_service_name}}.service'
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+  tags: [service]
+

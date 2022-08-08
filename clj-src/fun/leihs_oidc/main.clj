@@ -40,6 +40,8 @@
   (println (main-usage summary {:args args :options options}))
   (exit/exit))
 
+; TODO try catch exit when startup exception
+
 (defn- main []
   (info 'main [@args*])
   (let [args @args*

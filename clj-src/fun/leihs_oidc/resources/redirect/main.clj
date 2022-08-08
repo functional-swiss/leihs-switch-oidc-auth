@@ -79,8 +79,7 @@
           _ (info 'redirect state)
           {token-resp-body :body :as token-resp} (request-token code)
           _ (reset! last-token-response-body* token-resp-body)
-          id-token (jwt/validate-id-token! (:id_token token-resp-body))
-          _ (reset! last-id-token* id-token)
+          id-token (-> token-resp-body :id_token jwt/validate-id-token! (->> reset! last-id-token*))
           _ (nonces/validate! (:nonce id-token))
           user-info (:body (request-user-info token-resp-body))
           _ (info 'switch-user-info user-info)
@@ -95,7 +94,7 @@
               affiliations (switch/affiliations user-info)]
           (info 'managing-leihs-groups affiliations)
           (leihs-affiliations-groups/update-groups base-url user affiliations)))
-      (let [ token (jwt/my-sign
+      (let [token (jwt/my-sign
                      (spy {:sign_in_request_token (:sign_in_request_token state)
                            :email (:email user-attributes)
                            :success true}))
