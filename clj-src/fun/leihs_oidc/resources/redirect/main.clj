@@ -66,7 +66,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defonce last-id-token* (atom nil))
+;(defonce last-id-token* (atom nil))
 
 (defn handler [{{state-token :state code :code} :params :as request}]
   (try
@@ -79,7 +79,7 @@
           _ (info 'redirect state)
           {token-resp-body :body :as token-resp} (request-token code)
           _ (reset! last-token-response-body* token-resp-body)
-          id-token (-> token-resp-body :id_token jwt/validate-id-token! (->> reset! last-id-token*))
+          id-token (-> token-resp-body :id_token jwt/validate-id-token!)
           _ (nonces/validate! (:nonce id-token))
           user-info (:body (request-user-info token-resp-body))
           _ (info 'switch-user-info user-info)
@@ -104,4 +104,5 @@
         (info 'redirecting-to-leihs (string/prune url 80))
         (response/redirect url)))
     (catch Exception e
+      (warn e)
       (throw (ex-info "Unexpected error in redirect." {:status 500} e)))))

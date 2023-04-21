@@ -7,7 +7,7 @@
   {:min-level [[#{
                   ;"fun.leihs-oidc.leihs.affiliations-groups"
                   ;"fun.leihs-oidc.leihs.main"
-                  ;"fun.leihs-oidc.resources.redirect.main"
+                  "fun.leihs-oidc.resources.redirect.main"
                   }
                 :debug]
                [#{"fun.leihs-oidc.*"} :info]

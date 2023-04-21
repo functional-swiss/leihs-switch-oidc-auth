@@ -29,7 +29,7 @@
            "&" [(str "client_id=" (url/encode (config/client-id)))
                 (str "redirect_uri=" (url/encode (config/redirect-url)))
                 (str "nonce=" (url/encode nonce ))
-                (str "scope=" (url/encode"openid swissEduIDBase swissEduIDExtended"))
+                (str "scope=" (url/encode"openid profile email https://login.eduid.ch/authz/User.Read swissEduIDBase swissEduIDExtended"))
                 (str "state=" (url/encode state))
                 "response_type=code"
                 "response_mode=form_post"])]))
@@ -38,7 +38,6 @@
 
 (defonce last-leihs-data* (atom nil))
 
-; TODO try catch
 (defn sign-in [{{token :token} :query-params-parsed
                 request-method :request-method :as request}]
   (try
