@@ -1,3 +1,5 @@
+leihs_switch_oidc_project_dir: '{{role_path}}/../../..'
+leihs_switch_oidc_id: '{{inventory_hostname}}'
 leihs_switch_oidc_ansible_vars_file: '{{inventory_dir}}/config/{{leihs_switch_oidc_id}}_switch_oidc_ansible_vars.yml'
 leihs_switch_oidc_service_name: 'leihs-{{leihs_switch_oidc_id}}-switch-oidc'
 leihs_switch_oidc_user_name: '{{leihs_switch_oidc_service_name}}'

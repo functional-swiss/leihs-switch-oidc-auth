@@ -1,6 +1,6 @@
-- name: install opendjk-11-jdk
+- name: install opendjk-17-jdk
   apt:
-    name: openjdk-11-jdk
+    name: openjdk-17-jdk
     state: latest
     update_cache: yes
     cache_valid_time: 3600
@@ -33,13 +33,13 @@
   shell: |
     #!/usr/bin/env bash
     set -euxo
-    cd {{playbook_dir}}/..
+    cd {{leihs_switch_oidc_project_dir}}
     ./bin/uberjar
   tags: [uberjar]
 
 - name: copy uberjar
   copy:
-    src: '{{playbook_dir}}/../leihs-switch-oidc-auth.jar'
+    src: '{{leihs_switch_oidc_project_dir}}/leihs-switch-oidc-auth.jar'
     dest: '{{leihs_switch_oidc_service_dir}}/leihs-switch-oidc-auth.jar'
     owner: '{{leihs_switch_oidc_user_name}}'
   tags: [uberjar]
