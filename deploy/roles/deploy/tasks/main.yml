@@ -17,13 +17,29 @@
     owner: '{{leihs_switch_oidc_user_name}}'
     recurse: yes
 
+- name: create /etc/leihs/ directory
+  file:
+    path: /etc/leihs/
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
 - name: template {{leihs_switch_oidc_config_template}} config file
   template:
     src: '{{leihs_switch_oidc_config_template}}'
-    dest: '{{leihs_switch_oidc_service_dir}}/config.yml'
+    dest: /etc/leihs/{{leihs_switch_oidc_user_name}}_switch_oidc_config.yml
     mode: 0600
     owner: '{{leihs_switch_oidc_user_name}}'
     group: '{{leihs_switch_oidc_user_name}}'
+  tags: [config]
+
+- name: symlink config file
+  file:
+    src: /etc/leihs/{{leihs_switch_oidc_user_name}}_switch_oidc_config.yml
+    dest: '{{leihs_switch_oidc_service_dir}}/config.yml'
+    state: link
+    owner: '{{leihs_switch_oidc_user_name}}'
   tags: [config]
 
 - name: create uberjar
