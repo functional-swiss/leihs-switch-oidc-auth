@@ -75,6 +75,15 @@ submodule `leihs-switch-oidc-auth`.
     `leihs-switch-oidc-auth/deploy/roles/deploy/templates/leihs-switch-oidc.service`
 
 
+    Optional variables (defaults keep the production edu-ID and the scopes in use so far):
+
+    * `leihs_switch_oidc_config_url`: OpenID configuration of the issuer; set
+      `https://login.test.eduid.ch/.well-known/openid-configuration` for the
+      edu-ID test federation.
+    * `leihs_switch_oidc_scope`: scopes of the authorization request; the
+      scope `https://login.eduid.ch/authz/User.Read` is deprecated, use
+      `https://eduid.ch/scope/userinfo.read` instead.
+
 4. deploy e.g. with
 
     ```

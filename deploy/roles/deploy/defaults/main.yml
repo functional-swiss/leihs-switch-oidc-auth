@@ -6,3 +6,6 @@ leihs_switch_oidc_user_name: '{{leihs_switch_oidc_service_name}}'
 leihs_switch_oidc_service_dir: '/{{leihs_switch_oidc_service_name}}'
 leihs_switch_oidc_config_template: 'config.yml'
 leihs_switch_oidc_http_port: 3600
+# production edu-ID; use https://login.test.eduid.ch/.well-known/openid-configuration for the test federation
+leihs_switch_oidc_config_url: 'https://login.eduid.ch/.well-known/openid-configuration'
+leihs_switch_oidc_scope: 'openid profile email https://login.eduid.ch/authz/User.Read swissEduIDBase swissEduIDExtended'
