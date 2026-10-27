@@ -10,7 +10,9 @@ WorkingDirectory={{leihs_switch_oidc_service_dir}}
 User={{leihs_switch_oidc_user_name}}
 Group={{leihs_switch_oidc_user_name}}
 ExecStart=/usr/bin/java "-Xmx512m" \
-  "-jar" "leihs-switch-oidc-auth.jar" "run" \
+  "-jar" "leihs-switch-oidc-auth.jar" \
+  --repl {{ 'true' if leihs_switch_oidc_nrepl_enabled | bool else 'false' }} \
+  "run" \
   --http-server-port {{leihs_switch_oidc_http_port}}
 
 [Install]

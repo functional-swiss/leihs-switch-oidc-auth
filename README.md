@@ -102,6 +102,20 @@ submodule `leihs-switch-oidc-auth`.
     from now on sign-in should work as expected.
 
 
+### nREPL Console
+
+The adapter can start an nREPL server. It has no authentication: any local
+user who can reach the port can run code as the service user, which can read
+the OIDC client secret, the private key that signs responses to leihs and the
+leihs API token. It is off by default.
+
+* Command line: `--repl true` (global option, before `run`); environment:
+  `REPL=true`.
+* `--repl-bind` / `REPL_BIND` (default `localhost`), `--repl-port` /
+  `REPL_PORT` (default random), `--repl-port-file` (default `.nrepl-port`).
+* Ansible: `leihs_switch_oidc_nrepl_enabled` (default `false`).
+
+
 
 
 TODO
@@ -131,6 +145,9 @@ Test E-Mail Address: thomas.schank.test@{{CUSTOMER}}.ch
 ### Start in dev mode
 
     ./bin/clj-run run -c proto-config/cust-secret-config.yml
+
+`bin/clj-run` sets `REPL=true`, so dev runs start the nREPL server; the port
+is written to `.nrepl-port`. Use `REPL=false ./bin/clj-run …` to run without it.
 
 ### Add Hostname to MacOS
 

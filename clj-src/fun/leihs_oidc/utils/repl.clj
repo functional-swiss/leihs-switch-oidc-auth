@@ -21,8 +21,8 @@
 (def options-keys [repl-enable-key repl-bind-key repl-port-key repl-port-file-key])
 
 (def cli-options
-  [["-r" (long-opt-for-key repl-enable-key) "start the nREPL server"
-    :default (or (some-> repl-enable-key env yaml/parse-string) true)
+  [["-r" (long-opt-for-key repl-enable-key) "start the nREPL server (no authentication)"
+    :default (true? (some-> repl-enable-key env yaml/parse-string))
     :parse-fn #(yaml/parse-string %)
     :validate [boolean? "Must parse to a boolean"]]
    [nil (long-opt-for-key repl-port-key) "nREPL port (random default)"
