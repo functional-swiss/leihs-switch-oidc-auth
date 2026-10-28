@@ -11,7 +11,8 @@ service:
 oidc:
   client-id: {{leihs_switch_oidc_client_id}}
   client-secret: {{leihs_switch_oidc_client_secret}}
-  config-url: https://login.eduid.ch/.well-known/openid-configuration
+  config-url: '{{leihs_switch_oidc_config_url}}'
+  scope: '{{leihs_switch_oidc_scope}}'
 
 leihs:
   # boolean, turns on|off user and group management via leihs api

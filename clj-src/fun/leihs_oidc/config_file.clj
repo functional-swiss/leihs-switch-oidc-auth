@@ -76,6 +76,13 @@
 (defn client-secret []
   (get-in-presence! @config* [:oidc :client-secret]))
 
+(def default-scope
+  "openid profile email https://login.eduid.ch/authz/User.Read swissEduIDBase swissEduIDExtended")
+
+(defn scope []
+  (or (some-> @config* (get-in [:oidc :scope]) presence)
+      default-scope))
+
 (defn leihs-organization []
   (get-in-presence! @config*  [:leihs :organization]))
 
