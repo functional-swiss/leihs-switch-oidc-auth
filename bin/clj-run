@@ -5,6 +5,9 @@ cd $PROJECT_DIR
 $PROJECT_DIR/bin/env/java-setup
 $PROJECT_DIR/bin/env/clojure-setup
 
+# dev runs start the nREPL server; REPL=false disables it
+export REPL="${REPL:-true}"
+
 clojure -M -m fun.leihs-oidc.main "$@"
 
 # vi: ft=sh

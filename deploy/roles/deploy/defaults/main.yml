@@ -4,5 +4,7 @@ leihs_switch_oidc_ansible_vars_file: '{{inventory_dir}}/config/{{leihs_switch_oi
 leihs_switch_oidc_service_name: 'leihs-{{leihs_switch_oidc_id}}-switch-oidc'
 leihs_switch_oidc_user_name: '{{leihs_switch_oidc_service_name}}'
 leihs_switch_oidc_service_dir: '/{{leihs_switch_oidc_service_name}}'
+# nREPL server on localhost without authentication; code sent to it runs as the service user
+leihs_switch_oidc_nrepl_enabled: false
 leihs_switch_oidc_config_template: 'config.yml'
 leihs_switch_oidc_http_port: 3600
