@@ -11,3 +11,10 @@ leihs_switch_oidc_http_port: 3600
 # production edu-ID; use https://login.test.eduid.ch/.well-known/openid-configuration for the test federation
 leihs_switch_oidc_config_url: 'https://login.eduid.ch/.well-known/openid-configuration'
 leihs_switch_oidc_scope: 'openid profile email https://login.eduid.ch/authz/User.Read swissEduIDBase swissEduIDExtended'
+# claim for the leihs org_id: swissEduPersonUniqueID (personal edu-ID number) or
+# swissEduIDLinkedAffiliationUniqueID (local part of the linked affiliation ID with the affiliation scope)
+leihs_switch_oidc_org_id_claim: 'swissEduPersonUniqueID'
+# scope of linked affiliations and linked affiliation IDs, e.g. staff@example.org and 123456@example.org
+leihs_switch_oidc_affiliation_scope: '{{leihs_switch_oidc_leihs_organziation}}'
+# the adapter takes the email address from the linked affiliation emails that end with this domain
+leihs_switch_oidc_email_domain: '{{leihs_switch_oidc_leihs_organziation}}'

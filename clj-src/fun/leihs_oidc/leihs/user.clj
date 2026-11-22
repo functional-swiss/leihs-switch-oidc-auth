@@ -54,6 +54,17 @@
                        "See service logs for details.")
                   {:status 500} e)))))
 
+(defn refuse-if-email-taken
+  "Refuses the sign-in if an account other than user-id has the email address."
+  [base-url email user-id]
+  (when-let [account (request-user-by-email base-url email)]
+    (when (not= (:id account) user-id)
+      (throw (switch/refusal
+               (str "The email address " email " belongs to a different "
+                    "leihs account. Sign-in is not possible. "
+                    "Contact your leihs support.")
+               409)))))
+
 (defn update-user [base-url nominal-props user]
   "Update the user account iff target-prots are distinct from current-props."
   (debug 'update-user nominal-props user)
@@ -71,13 +82,16 @@
                           set)]
          (if-not (empty? diff-ks)
            (do
-             ; new email some other account might have it => remove it
              (when (contains? diff-ks :email)
-               (remove-email base-url (:email target-user-props)))
+               (if (config/key-on-linked-affiliation-id?)
+                 (refuse-if-email-taken base-url (:email target-user-props) (:id user))
+                 ; new email some other account might have it => remove it
+                 (remove-email base-url (:email target-user-props))))
              (patch-user base-url (:id user)
                          (select-keys target-user-props diff-ks)))
            user))
        (catch Exception e
+         (when (switch/refusal? e) (throw e))
          (throw (ex-info
                   (str "Failed to update-user account. "
                        "See service logs for details.")
@@ -85,8 +99,10 @@
 
 (defn create-user [base-url properties]
   "Create a new user with given properties"
-  ; we don't know if some other user already has the email address => remove it
-  (remove-email base-url (:email properties))
+  (if (config/key-on-linked-affiliation-id?)
+    (refuse-if-email-taken base-url (:email properties) nil)
+    ; we don't know if some other user already has the email address => remove it
+    (remove-email base-url (:email properties)))
   (try
     (-> (basic-request-properties)
         (assoc :body (-> (merge
@@ -120,7 +136,8 @@
 
 (defn create-or-update-user
   "Creates or updates leihs user account. Returns the properties of the user account.
-  Potentially removes the designated primary email-address from some other account. "
+  Potentially removes the designated primary email-address from some other account;
+  with the org-id-claim swissEduIDLinkedAffiliationUniqueID it refuses the sign-in instead. "
   [base-url {email :email
              organization :organization
              org-id :org_id :as properties}]

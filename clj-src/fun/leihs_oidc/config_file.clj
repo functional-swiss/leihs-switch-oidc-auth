@@ -86,6 +86,29 @@
 (defn leihs-organization []
   (get-in-presence! @config*  [:leihs :organization]))
 
+(defn leihs-affiliation-scope []
+  (or (some-> @config* (get-in [:leihs :affiliation-scope]) presence)
+      (leihs-organization)))
+
+(defn leihs-email-domain []
+  (or (some-> @config* (get-in [:leihs :email-domain]) presence)
+      (leihs-organization)))
+
+(def org-id-claims
+  #{"swissEduPersonUniqueID" "swissEduIDLinkedAffiliationUniqueID"})
+
+(def default-org-id-claim "swissEduPersonUniqueID")
+
+(defn leihs-org-id-claim []
+  (let [claim (or (some-> @config* (get-in [:leihs :org-id-claim]) str presence)
+                  default-org-id-claim)]
+    (or (org-id-claims claim)
+        (throw (ex-info (str "Unsupported value for leihs org-id-claim: " claim)
+                        {:status 500})))))
+
+(defn key-on-linked-affiliation-id? []
+  (= (leihs-org-id-claim) "swissEduIDLinkedAffiliationUniqueID"))
+
 (defn leihs-api-token []
   (get-in-presence! @config* [:leihs :api-token]))
 
@@ -100,6 +123,7 @@
                      (import-keypair [:leihs :my-key-pair])
                      (import-keypair [:leihs :remote-key-pair]))]
       (reset! config* config)))
+  (info "org_id claim:" (leihs-org-id-claim))
   (info "initialized, read and parsed config-file ")
   (debug @config*))
 
