@@ -21,6 +21,12 @@ leihs:
   api-token: '{{leihs_switch_oidc_leihs_api_token}}'
   # leihs user and group organization
   organization: '{{leihs_switch_oidc_leihs_organziation}}'
+  # swissEduPersonUniqueID or swissEduIDLinkedAffiliationUniqueID
+  org-id-claim: '{{leihs_switch_oidc_org_id_claim}}'
+  # scope of linked affiliations and linked affiliation IDs
+  affiliation-scope: '{{leihs_switch_oidc_affiliation_scope}}'
+  # domain of the linked affiliation email
+  email-domain: '{{leihs_switch_oidc_email_domain}}'
 
   # sensible defaults fixed here, use custom template for customization
   user-create-defaults:

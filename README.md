@@ -83,6 +83,16 @@ submodule `leihs-switch-oidc-auth`.
     * `leihs_switch_oidc_scope`: scopes of the authorization request; the
       scope `https://login.eduid.ch/authz/User.Read` is deprecated, use
       `https://eduid.ch/scope/userinfo.read` instead.
+    * `leihs_switch_oidc_org_id_claim`: the claim for the `org_id` of the
+      leihs user; default `swissEduPersonUniqueID`, see "Key on the Linked
+      Affiliation ID" below.
+    * `leihs_switch_oidc_affiliation_scope`: scope of the linked affiliations
+      (for example `staff@example.org`) and of the linked affiliation IDs (for
+      example `123456@example.org`); default is the value of
+      `leihs_switch_oidc_leihs_organziation`.
+    * `leihs_switch_oidc_email_domain`: the adapter takes the email address
+      from the linked affiliation emails that end with this domain; default is
+      the value of `leihs_switch_oidc_leihs_organziation`.
 
 4. deploy e.g. with
 
@@ -109,6 +119,52 @@ submodule `leihs-switch-oidc-auth`.
     There will be a new group with the organization `{{YOURDOMAIN}}` and
     the org_id `switch-oidc`. Connect this one to the authentication system and
     from now on sign-in should work as expected.
+
+
+### Key on the Linked Affiliation ID
+
+The adapter finds the leihs user by the organization and the `org_id`.
+`leihs_switch_oidc_org_id_claim` sets the source of the `org_id`:
+
+* `swissEduPersonUniqueID` (default): the personal edu-ID number. If no user
+  has this `org_id`, the adapter removes the email address from the account
+  that has it and creates a new user.
+* `swissEduIDLinkedAffiliationUniqueID`: the local part of the linked
+  affiliation ID whose scope is equal to `leihs_switch_oidc_affiliation_scope`,
+  for example `123456` from `123456@example.org`. Use this value for an
+  instance whose existing users have a local organization ID as `org_id`.
+
+A different value causes an error when the adapter starts.
+
+The edu-ID resource must release the claim
+`swissEduIDLinkedAffiliationUniqueID`, and `leihs_switch_oidc_scope` must
+request it. Without this claim, the adapter refuses every sign-in in this mode.
+
+With `swissEduIDLinkedAffiliationUniqueID`, the adapter refuses the sign-in in
+these cases:
+
+* No linked affiliation ID has the affiliation scope (status 422).
+* Linked affiliation IDs with different local parts have the affiliation scope
+  (status 422).
+* The email address belongs to a different leihs account (status 409). The
+  adapter does not change that account.
+
+The adapter does not use the personal edu-ID number in this mode. The scope
+must be equal, a subdomain does not match. The comparison ignores case.
+
+Example for the organization `example.org` with email addresses like
+`ada@students.example.org`:
+
+```yaml
+leihs_switch_oidc_leihs_organziation: example.org
+leihs_switch_oidc_org_id_claim: swissEduIDLinkedAffiliationUniqueID
+leihs_switch_oidc_affiliation_scope: example.org
+leihs_switch_oidc_email_domain: example.org
+```
+
+Examine real user data before you enable this mode in production: the
+`org_id` of the existing users must be equal to the local part of their linked
+affiliation ID.
 
 
 ### nREPL Console
@@ -149,6 +205,11 @@ Test E-Mail Address: thomas.schank.test@{{CUSTOMER}}.ch
 
 3. Test if email address will be deleted from some other account
 
+
+
+### Unit Tests
+
+    clojure -M:test
 
 
 ### Start in dev mode

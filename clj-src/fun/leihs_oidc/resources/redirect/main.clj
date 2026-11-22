@@ -105,4 +105,5 @@
         (response/redirect url)))
     (catch Exception e
       (warn e)
+      (when (switch/refusal? e) (throw e))
       (throw (ex-info "Unexpected error in redirect." {:status 500} e)))))
