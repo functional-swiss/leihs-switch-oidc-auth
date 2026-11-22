@@ -1,7 +1,9 @@
-- name: install opendjk-17-jdk
+# the uberjar needs Java 11 or later; Debian's default runtime is 17 on
+# bookworm and 21 on trixie (which has no openjdk-17)
+- name: install default-jre-headless
   apt:
-    name: openjdk-17-jdk
-    state: latest
+    name: default-jre-headless
+    state: present
     update_cache: yes
     cache_valid_time: 3600
 
